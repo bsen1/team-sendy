@@ -1,19 +1,14 @@
 #!/usr/bin/env python3
 """
-PullPush (Pushshift mirror) → print posts AFTER a chosen date,
-with topic labels added via keyword matching.
-
-Only posts that match at least one keyword label are printed.
+PullPush (Pushshift mirror) → print posts AFTER a chosen date.
 
 Output columns (TSV):
-  score    date_posted_utc    title    body    labels
+  score    date_posted_utc    title    body
 """
 
-import re
 import time
 import requests
 from datetime import datetime, timezone
-from keywords_ucsb import TOPIC_KEYWORDS  # <- keyword file
 
 # ==== EDIT THESE ====
 SUBREDDIT  = "UCSantaBarbara"
@@ -30,27 +25,6 @@ def to_epoch(date_str: str) -> int:
     dt = datetime.strptime(s, "%Y-%m-%d").replace(tzinfo=timezone.utc)
     return int(dt.timestamp())
 
-def build_topic_patterns(topic_map: dict[str, list[str]]) -> dict[str, re.Pattern]:
-    compiled = {}
-    for topic, terms in topic_map.items():
-        words = []
-        for t in terms:
-            t = t.strip()
-            if not t:
-                continue
-            esc = re.escape(t)
-            if re.fullmatch(r"[A-Za-z0-9]+", t):
-                words.append(rf"\b{esc}\b")
-            else:
-                words.append(esc)
-        compiled[topic] = re.compile("|".join(words), flags=re.IGNORECASE)
-    return compiled
-
-TOPIC_PATTERNS = build_topic_patterns(TOPIC_KEYWORDS)
-
-def match_topics(title: str, body: str) -> list[str]:
-    text = f"{title}\n{body}".lower()
-    return [topic for topic, patt in TOPIC_PATTERNS.items() if patt.search(text)]
 
 def get_with_retry(session: requests.Session, params: dict, max_retries: int = 6):
     backoff = 0.5
@@ -83,7 +57,7 @@ def fetch_all_after(subreddit: str, after_epoch: int, sleep_s: float = 0.2):
     }
 
     before_cursor = None
-    print("score\tdate_posted_utc\ttitle\tbody\tlabels")
+    print("score\tdate_posted_utc\ttitle\tbody")
 
     while True:
         if before_cursor is not None:
@@ -110,13 +84,7 @@ def fetch_all_after(subreddit: str, after_epoch: int, sleep_s: float = 0.2):
             if body in ("[deleted]", "[removed]"):
                 body = ""
 
-            # Match keywords
-            labels = match_topics(title, body)
-            if not labels:
-                continue  # skip posts with no label matches
-
-            labels_str = ";".join(labels)
-            print(f"{score}\t{created_str}\t{title}\t{body}\t{labels_str}")
+            print(f"{score}\t{created_str}\t{title}\t{body}")
 
         last_created = data[-1].get("created_utc")
         if not isinstance(last_created, (int, float)):

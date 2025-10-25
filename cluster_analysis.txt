@@ -1,0 +1,496 @@
+CLUSTER ANALYSIS RESULTS
+============================================================
+
+Optimal number of clusters: 49
+Determined using multiple methods: Silhouette, Calinski-Harabasz, Davies-Bouldin, and Elbow method.
+
+Cluster 0 (55 posts) - Topic: GENERAL
+  Top keywords: anyone, letter, application, email, code, barc, portal, perm, need, package
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Rocky Horror Show UCSB student ticket
+    2. Partial Tuition Refund
+    3. Acceptance letter
+    4. Is anyone getting a physical admit letter?
+    5. how to send letter mail at ucen
+
+Cluster 1 (68 posts) - Topic: HOUSING
+  Top keywords: really, dorms, dorm, freshman, wondering, people, santa, social, should, beach
+  Topic scores: {'housing': 1, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 1, 'transportation': 0}
+  Sample posts:
+    1. Orientation questions..
+    2. Residence Halls
+    3. Move In Day and Family Weekend Questions
+    4. ‼️Burning questions for UCSB student‼️
+    5. sphere house
+
+Cluster 2 (33 posts) - Topic: ACADEMIC
+  Top keywords: major, biopsych, advice, classes, biology, take, summer, majors, chem, help
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 1, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Biopsych Major
+    2. pre-bio to pre-biopsych major switch advice w course planning !
+    3. pre-bio to pre-biopsych major switch advice w course planning !
+    4. Is senior year the hardest year in college?
+    5. Biopsych/PsyB people please help
+
+Cluster 3 (157 posts) - Topic: ACADEMIC
+  Top keywords: major, really, program, ucla, both, opportunities, between, life, research, schools
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 1, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. ucsb or cal poly slo?
+    2. I got off the waitlist! so convince me why I should go to UCSB or UCI
+    3. uc davis or ucsb for premed
+    4. ucsb or ucla or uci?
+    5. Is UCSB really that bad for premed?
+
+Cluster 4 (51 posts) - Topic: GENERAL
+  Top keywords: schedule, quarter, calendar, anyone, does, spring, google, summer, fall, hours
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. fall ‘25 schedule
+    2. Employment at the University post-grad
+    3. Fall 2025 Course Schedules Released!
+    4. Subleasing for fall 2025
+    5. pokemon 🧌
+
+Cluster 5 (82 posts) - Topic: ACADEMIC
+  Top keywords: class, grades, final, grade, midterm, anyone, math, curve, professor, canvas
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 5, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Suspected of AI
+    2. 101 midterm
+    3. 101 midterm
+    4. How are the geog 115 and 176 series?
+    5. I made a Grade Tracker to Help Manage Course Grades and GPA
+
+Cluster 6 (95 posts) - Topic: TRANSPORTATION
+  Top keywords: lost, keys, bike, found, please, anyone, wallet, find, around, someone
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 1}
+  Sample posts:
+    1. Found Sunglasses
+    2. Missing keys
+    3. Lost item
+    4. Lost keys &amp; water bottle
+    5. lost keys/wallet @ mtd bus (i think)
+
+Cluster 7 (49 posts) - Topic: GENERAL
+  Top keywords: tickets, extra, graduation, june, grad, need, anyone, looking, please, ceremony
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Looking to Purchase Commencement Tickets. June 14 1 pm
+    2. Commencement ticket available (14th 9:00am)
+    3. WILL PAY- Extra Tickets to L&amp;S Grad II on June 15
+    4. Need help finding a graduation photographer
+    5. Tickets for the Maria’s SB Bowl 7/18
+
+Cluster 8 (79 posts) - Topic: ACADEMIC
+  Top keywords: class, anyone, take, taken, taking, course, summer, quarter, does, professor
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 3, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. MCDB 126
+    2. Does anybody have their MCDB 126A + 126B syllabus from Fall/Winter?
+    3. Ichiba or Palaniappan for PSTAT 160A?
+    4. UCSB Econ 140a
+    5. Has anyone worked on WORD Magazine?
+
+Cluster 9 (94 posts) - Topic: ACADEMIC
+  Top keywords: program, anyone, wondering, transfer, major, accepted, experience, really, clubs, tier
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 1, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Question for undeclared students
+    2. Average UCSB pre-major student trying to sign up for high demand classes out of their Pass time (me)
+    3. UCSBMax???
+    4. A few questions about working on or near campus
+    5. Anyone successfully match the Cognitive Science major that UC Davis offers with something at UCSB?
+
+Cluster 10 (40 posts) - Topic: GENERAL
+  Top keywords: music, playing, anyone, play, band, looking, wanna, group, right, songs
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Looking for ppl to play music with
+    2. Underground Training Facility Blood Drive 5/10/25 Goleta
+    3. Earrape in the gym?
+    4. What has our society &amp; community come to…
+    5. r u serious😭
+
+Cluster 11 (33 posts) - Topic: GENERAL
+  Top keywords: anyone, else, people, every, health, feel, does, same, really, coffee
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. How to keep up with weight of everything
+    2. Anyone still have flashbacks from 2014?
+    3. Female Therapy Recs?
+    4. Self Pavlov
+    5. My new roommate and her babies
+
+Cluster 12 (53 posts) - Topic: GENERAL
+  Top keywords: anyone, does, going, ride, need, driving, santa, downtown, around, best
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Does anyone know of anywhere in IV that has keto food options? Or any drinks that are keto.
+    2. Favorite places to shit in IV
+    3. Night life on Fridays in Santa Barbara
+    4. what are the best bars around ucsb?
+    5. Get rid of Starbucks at UCEN
+
+Cluster 13 (86 posts) - Topic: ACADEMIC
+  Top keywords: class, take, classes, quarter, course, summer, upper, units, major, need
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 3, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Do you guys know if I withdraw from the class, will the next time I take it count as my first or sec...
+    2. Sections Vigoda/CMPSC 130A
+    3. going over 200 credits
+    4. Daily Nexus Grade Distributions UPDATED!
+    5. Gen Ed Requirements Question
+
+Cluster 14 (62 posts) - Topic: ACADEMIC
+  Top keywords: study, class, anyone, final, midterm, help, tips, advice, lecture, studying
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 3, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. 100b study tips
+    2. PSY 102 Baham Midterm
+    3. earth7 midterm
+    4. Phil 4 Exam 1 (how to study)
+    5. cs9
+
+Cluster 15 (41 posts) - Topic: GENERAL
+  Top keywords: jobs, hiring, looking, anyone, opportunities, career, internship, feel, program, quarter
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. computer science?
+    2. Looking for CS people interested in startup partnership
+    3. People in ECE: How have you found your experience thus far?
+    4. Looking for actors
+    5. anyone know of any jobs hiring over the summer?
+
+Cluster 16 (30 posts) - Topic: GENERAL
+  Top keywords: protest, tomorrow, please, hands, anyone, show, stop, happening, trump, petition
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Please vote for my nephew to become the 2025 Jr. Ranger! (Not a survey or trying to sell anything)
+    2. TRUTH Act Forum 6/6 2pm
+    3. Hands Off Rally Today
+    4. Head to the protest downtown before partying later.
+    5. Hands Off! Santa Barbara Fights Back · Hands Off
+
+Cluster 17 (27 posts) - Topic: GENERAL
+  Top keywords: anyone, earth, image, processing, failed, water, does, else, chatgpt, rescue
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. water rescue DP?
+    2. water rescue DP?
+    3. Last Minute Photographer Needed - 4/27
+    4. Has anyone taked GEOG 5 offline?
+    5. Please help if you have any information
+
+Cluster 18 (49 posts) - Topic: ACADEMIC
+  Top keywords: financial, class, quarter, help, still, drop, scholarship, should, classes, major
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 2, 'financial': 1, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Helppp! Financial aid award
+    2. Should I fill out a petition to withdraw from one of my classes? (W on Transcript)
+    3. am i getting rescinded
+    4. Last day to drop in GOLD, y'all
+    5. I didn't report a dropped class when applying, will they rescind my admission?
+
+Cluster 19 (34 posts) - Topic: ACADEMIC
+  Top keywords: survey, please, project, final, responses, help, fill, need, class, needed
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 2, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Easy survey for students, free gift cards!
+    2. PS Anyone can fill out the survey!!! We’re gonna do fun stuff(beach day, zoo, game night etc)
+    3. URCA Project - Survey Participants Needed
+    4. 12 Away From Goal
+    5. Valley Fever Awareness Survey
+
+Cluster 20 (58 posts) - Topic: ACADEMIC
+  Top keywords: pstat, anyone, final, 120a, taking, class, quarter, 120b, take, wondering
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 2, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. PSTAT 120b resources
+    2. Someone please drop PSTAT 131🙏
+    3. PSTAT 120A Online?
+    4. Barcaldo or Grigorian
+    5. PSTAT courses
+
+Cluster 21 (75 posts) - Topic: ACADEMIC
+  Top keywords: anyone, class, does, syllabus, econ, professor, find, book, canvas, need
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 2, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Classes for History of Public Policy &amp; Law
+    2. which professors for math 104a and pstat 160a?
+    3. PSY 110-195
+    4. PSY 10A with Baham
+    5. PSY 10A with Baham
+
+Cluster 22 (58 posts) - Topic: ACADEMIC
+  Top keywords: research, help, social, people, find, major, anyone, looking, media, tier
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 1, 'financial': 0, 'food': 0, 'social': 1, 'transportation': 0}
+  Sample posts:
+    1. Comm Major Insight
+    2. Communication Major Insight
+    3. Communication Major Insight
+    4. Comm Major Insight
+    5. funniest/most interesting professors?
+
+Cluster 23 (67 posts) - Topic: ACADEMIC
+  Top keywords: chem, anyone, class, chemistry, final, price, quarter, does, taking, midterm
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 3, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. HELP!! Summer Chem Courses at Community Colleges
+    2. How doable is it taking MCDB 126, 126AL, and 108A while at the same time taking CHEM 112A...?
+    3. Which Professor Should I Take For CHEM109A
+    4. chem 1b midterm
+    5. CHEM 1B midterm 1
+
+Cluster 24 (28 posts) - Topic: GENERAL
+  Top keywords: transfer, community, survey, environmental, love, please, short, environment, experience, hear
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. UCSB Iceberg (First Edition)
+    2. friends!
+    3. Hey Transfer Students!!!
+    4. Hey Transfer Students!
+    5. A2f church
+
+Cluster 25 (56 posts) - Topic: HOUSING
+  Top keywords: housing, transfer, looking, anyone, apartments, live, people, advice, rent, contract
+  Topic scores: {'housing': 2, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. undergrad apartments
+    2. Off Campus Housing vs SD/Davis
+    3. Most affordable housing
+    4. Housing
+    5. Transfer housing advice, incoming FA 25 Transfer
+
+Cluster 26 (53 posts) - Topic: SOCIAL
+  Top keywords: anyone, looking, ticket, free, concert, sean, tickets, event, going, come
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 1, 'transportation': 0}
+  Sample posts:
+    1. sierra madre: 4 people/2 doubles
+    2. Student Standup Showcase this Saturday (5/10) at Embarcadero Hall
+    3. come w me: chezile concert this friday in downtown sb
+    4. ksig parties
+    5. ksig parties
+
+Cluster 27 (80 posts) - Topic: GENERAL
+  Top keywords: night, shooting, anyone, someone, people, last, emergency, police, please, help
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. DUI checkpoint
+    2. does anyone know what all the sirens are about?
+    3. Why does Pardall feel like Rainbow Road after 10pm??
+    4. Screaming last night
+    5. Creepy fat guy recording in front of bus loop
+
+Cluster 28 (132 posts) - Topic: GENERAL
+  Top keywords: anyone, need, does, help, please, something, today, easter, someone, thought
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. quit cheating yourself---stop using chat gpt
+    2. Always go for it
+    3. Thought it might be appreciated here.
+    4. UCSB Iceberg (Second Edition)
+    5. Bypass code
+
+Cluster 29 (39 posts) - Topic: ACADEMIC
+  Top keywords: waitlist, waitlisted, major, really, even, getting, anyone, class, choice, math
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 2, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Giving up hope on getting off the waitlist
+    2. Chem Waitlist
+    3. waitlist movement ?
+    4. UCSB Waitlist Questions
+    5. UCSB waitlist wave yesterday?
+
+Cluster 30 (54 posts) - Topic: HOUSING
+  Top keywords: housing, lease, looking, anyone, contract, someone, spring, take, interested, apartment
+  Topic scores: {'housing': 3, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Looking for a subleaser for the summer, $850 rent for a double
+    2. Lease Takeover
+    3. Want 2b1b/2b lease from Aug/Sep
+    4. San Raf Housing
+    5. Summer Sublease
+
+Cluster 31 (46 posts) - Topic: HOUSING
+  Top keywords: even, people, roommate, room, because, going, roommates, feel, apartment, move
+  Topic scores: {'housing': 3, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Random roommate experiences?
+    2. Dude in my building
+    3. i hate my roommates
+    4. Noisy ass neighbors
+    5. AmITheJerk Asking for opinions: DLG Tries To Deny Me From Eating
+
+Cluster 32 (39 posts) - Topic: FINANCIAL
+  Top keywords: people, calpirg, education, federal, being, financial, government, even, california, science
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 1, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Is SLR always such a pain?
+    2. Has anyone gotten their Partial Fee Reduction reduction yet?
+    3. Over 150 college presidents sign letter rebuking 'government overreach', including almost every UC P...
+    4. Over 270 university presidents and chancellors have signed a letter against government overreach in ...
+    5. Over 270 university presidents and chancellors have signed a letter against government overreach in ...
+
+Cluster 33 (67 posts) - Topic: GENERAL
+  Top keywords: anyone, feel, going, people, need, fees, years, health, wondering, many
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Saving desks in library
+    2. Negative Student Health Experiences?
+    3. FSSP students have to stay in San Nicholas the entire year??
+    4. gifts for profs?
+    5. Student Commuter Club
+
+Cluster 34 (60 posts) - Topic: SOCIAL
+  Top keywords: friends, people, feel, anyone, really, going, love, friend, looking, only
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 1, 'transportation': 0}
+  Sample posts:
+    1. Genuinely don’t know how to make friends
+    2. Diveristy
+    3. I love it here and I feel like time has passed so quickly
+    4. Hottt German Guy in Econ 100b
+    5. I grew up as one of the only white boys in a Korean neighborhood in Toronto, and my Korean guy frien...
+
+Cluster 35 (52 posts) - Topic: GENERAL
+  Top keywords: anyone, petition, applied, minor, does, really, appeal, quarter, science, wondering
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Exceptional Academic Performance Award
+    2. PASS/ NO PASS TRANSFER
+    3. 22 yr old cc transfer joining sorority
+    4. 22 yr old cc transfer joining sorority
+    5. Petition for writing credit
+
+Cluster 36 (68 posts) - Topic: HOUSING
+  Top keywords: looking, roommate, housing, roommates, anyone, interested, room, next, find, apartment
+  Topic scores: {'housing': 4, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. When do I(Incoming Freshman) need to find my roommates by
+    2. Temporary Fall Quarter ‘25 Roommates?
+    3. Looking for roommates for Santa Ynez apartments
+    4. Too late to find good housing
+    5. How to find a roommate?
+
+Cluster 37 (80 posts) - Topic: ACADEMIC
+  Top keywords: econ, anyone, major, class, quarter, advice, taking, transfer, summer, accounting
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 2, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Econ 10A midterm 2
+    2. Birchenall, Benelli, Ebenstein, Lowel Econ Electives
+    3. Econ + What major?
+    4. Econ 10A with Bree lang
+    5. Econ Transfer questions
+
+Cluster 38 (69 posts) - Topic: SOCIAL
+  Top keywords: anyone, club, looking, people, play, does, find, wondering, surf, down
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 1, 'transportation': 0}
+  Sample posts:
+    1. anyone down for early morning jogs? ~11m pace
+    2. Anyone down for early morning jogs? ~11min pace
+    3. What will get you to go to an event by yourself?
+    4. Film style grad photos?
+    5. Looking to sublease for summer
+
+Cluster 39 (83 posts) - Topic: ACADEMIC
+  Top keywords: major, transfer, physics, engineering, classes, science, switch, econ, take, majors
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 1, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Transfer econ and accounting major
+    2. transfer for econ and accounting major
+    3. Can I graduate with a D- in a major elective class?
+    4. How hard is it to maintain a GPA of 3.5 or more in environmental science?
+    5. Pre-major Reqs
+
+Cluster 40 (78 posts) - Topic: ACADEMIC
+  Top keywords: major, classes, take, courses, class, math, course, science, need, units
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 3, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Courses that count as econ electives from other departments?
+    2. Any easy courses from this list?
+    3. CS Major requirements... nuked?😳24-25 GEAR
+    4. Computer Science Classss
+    5. Computer Science Classes For Upcoming Fall Quarter
+
+Cluster 41 (84 posts) - Topic: ACADEMIC
+  Top keywords: deltopia, last, night, going, everyone, anyone, isla, vista, final, happening
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 1, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Too chopped to go here
+    2. pokemon go
+    3. Warning for University Housing Sierra Madre
+    4. His Final Goodbye
+    5. Since yiktak took it down
+
+Cluster 42 (22 posts) - Topic: GENERAL
+  Top keywords: gauchos, gauchoguys, ramen, santa, barbara, squirtle, team, happened, shoutout, server
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Where can a man get a banana?
+    2. UC Santa Barbara Gauchos Squirtle Squad.
+    3. UC Santa Barbara Gauchos Squirtle
+    4. Gaucho Gremlins Discord Server, a Place for All Graduate and Undergraduate Students
+    5. UC Santa Barbara Gauchos Squirtle [oc] !!
+
+Cluster 43 (51 posts) - Topic: HOUSING
+  Top keywords: housing, contract, anyone, does, apartments, transfer, selection, application, fall, looking
+  Topic scores: {'housing': 1, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. picking a residence hall
+    2. Mandatory inspections on Oceanside DP houses this summer?
+    3. Mandatory housing inspections on oceanside dp coming up
+    4. Mandatory housing inspections on oceanside dp coming up
+    5. Transfer housing question
+
+Cluster 44 (40 posts) - Topic: PARKING
+  Top keywords: parking, park, bike, ticket, near, overnight, pass, permit, does, spots
+  Topic scores: {'housing': 0, 'parking': 1, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 1}
+  Sample posts:
+    1. FYI for Incoming First Year Students - UCSB Parking Policy
+    2. FYI for Incoming First Year Students - UCSB Parking Policy
+    3. To all expert surfers @ UCSB
+    4. Got a parking ticket outside Santa Rosa do I actually have to pay it
+    5. Bike Parking - Choose Wisely
+
+Cluster 45 (36 posts) - Topic: HOUSING
+  Top keywords: housing, apartment, apartments, living, lease, rent, anyone, find, live, fall
+  Topic scores: {'housing': 4, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Housing
+    2. Moving into new apartment
+    3. Best/Nicest place to rent in IV
+    4. Grad Student Housing - Dietary Restrictions
+    5. Homeless in IV
+
+Cluster 46 (89 posts) - Topic: GENERAL
+  Top keywords: anyone, need, looking, selling, does, sell, please, clothes, price, take
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Where are ppl selling their stuff now that UCSB Free &amp; For Sale is gone?
+    2. any good thrift shops in Goleta/dt sb?
+    3. If you’re class of ‘25, don’t forget to pick up your 4gb usb stick e-waste and plastic bag graduatio...
+    4. Looking for People Who Love THRIFTING!!!
+    5. Bake Sale PULL UP
+
+Cluster 47 (82 posts) - Topic: GENERAL
+  Top keywords: does, anyone, health, need, santa, barbara, please, help, ucen, check
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. World’s biggest Raspberry Pi cluster is now at UCSB 👍
+    2. UCSB Iceberg (Second Version)
+    3. how to get to the police station
+    4. New UC President
+    5. Red Heel is missing, apparently a UCSB frat has it
+
+Cluster 48 (45 posts) - Topic: GENERAL
+  Top keywords: bear, lost, found, black, around, anyone, seen, sighting, santa, park
+  Topic scores: {'housing': 0, 'parking': 0, 'academic': 0, 'financial': 0, 'food': 0, 'social': 0, 'transportation': 0}
+  Sample posts:
+    1. Bear ecologist offers insight on recent sightings on and around campus 🐻
+    2. bear tracks westward!
+    3. Found at Estero Park
+    4. is there any one saw the bear in I.V?
+    5. Lost dog running near IV/campus
+
