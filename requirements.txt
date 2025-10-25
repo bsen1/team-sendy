@@ -1,0 +1,17 @@
+# Core
+requests>=2.31.0
+
+# Data utils
+numpy>=1.26.0
+pandas>=2.2.0
+scikit-learn>=1.4.0
+
+# Embeddings
+sentence-transformers>=2.7.0
+# If your environment doesn't auto-install PyTorch, uncomment one of these:
+# torch>=2.2.0
+# torch==2.2.0+cpu ; platform_system=="Linux" and platform_machine=="x86_64" --extra-index-url https://download.pytorch.org/whl/cpu
+
+# Dimensionality reduction + clustering
+umap-learn>=0.5.5
+hdbscan>=0.8.38
