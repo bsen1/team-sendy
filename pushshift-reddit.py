@@ -11,7 +11,7 @@ import requests
 from datetime import datetime, timezone
 
 # ==== EDIT THESE ====
-SUBREDDIT  = "UCSantaBarbara"
+SUBREDDIT  = "UCLA"
 AFTER_DATE = "2025-01-01"
 # =====================
 
