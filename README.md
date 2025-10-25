@@ -1,6 +1,6 @@
 ## STOCKTWITS: User comments on a specific ticker (ex: AAPL)
 
-[https://api.stocktwits.com/api/2/streams/symbol/aapl.json](StockTwits)
+[StockTwits](https://api.stocktwits.com/api/2/streams/symbol/aapl.json)
 
 ## TICKERTICK: News titles and description on a specific ticker (ex: AAPL)
 
