@@ -9,6 +9,7 @@ import os
 from typing import List, Dict, Optional, Any
 from openai import AsyncAzureOpenAI, pydantic_function_tool
 from openai.types.chat import ChatCompletion
+from openai.types import CreateEmbeddingResponse
 from pydantic import BaseModel, Field
 from enum import Enum
 from dotenv import load_dotenv
@@ -34,10 +35,17 @@ class ReasoningEffort(str, Enum):
     HIGH = "high"  # math olympiad type tasks, takes forever and is expensive and you 99% don't need this
 
 
+class EmbeddingModel(str, Enum):
+    TEXT_EMBEDDING_3_SMALL = "text-embedding-3-small"
+
+
 subscription_key = os.getenv("SUBSCRIPTION_KEY")
 
 # Semaphore to limit concurrent OpenAI calls to 20
 _openai_semaphore = asyncio.Semaphore(20)
+
+# Semaphore to limit concurrent embedding calls to 100
+_embedding_semaphore = asyncio.Semaphore(100)
 
 
 async def create_openai_completion(
@@ -92,6 +100,67 @@ async def create_openai_completion(
         response = await client.chat.completions.create(**request_params)
 
         return response
+
+
+async def create_embeddings(
+    texts: List[str],
+    model: EmbeddingModel = EmbeddingModel.TEXT_EMBEDDING_3_SMALL,
+    client: Optional[AsyncAzureOpenAI] = None,
+) -> CreateEmbeddingResponse:
+    """
+    Create embeddings using Azure OpenAI.
+    
+    Args:
+        texts: List of text strings to embed
+        model: Embedding model to use
+        client: Optional pre-configured client, creates new one if None
+        
+    Returns:
+        CreateEmbeddingResponse with embeddings for all input texts
+    """
+    async with _embedding_semaphore:
+        if client is None:
+            client = AsyncAzureOpenAI(
+                api_version="2024-02-01",
+                azure_endpoint=endpoint,
+                api_key=subscription_key,
+            )
+
+        response = await client.embeddings.create(input=texts, model=model.value)
+        return response
+
+
+async def generate_embeddings_batch(texts: List[str], batch_size: int = 100):
+    """
+    Generate embeddings for a large list of texts using batching.
+    
+    Args:
+        texts: List of text strings to embed
+        batch_size: Number of texts to process in each batch
+        
+    Returns:
+        List of embedding vectors
+    """
+    import numpy as np
+    
+    all_embeddings = []
+    
+    for i in range(0, len(texts), batch_size):
+        batch = texts[i:i + batch_size]
+        print(f"Processing embedding batch {i//batch_size + 1}/{(len(texts) + batch_size - 1)//batch_size}")
+        
+        try:
+            response = await create_embeddings(batch)
+            batch_embeddings = [item.embedding for item in response.data]
+            all_embeddings.extend(batch_embeddings)
+        except Exception as e:
+            print(f"Error processing embedding batch {i//batch_size + 1}: {e}")
+            # Fallback: create zero embeddings for failed batch
+            # Use 1536 as default, but this should match the actual model dimensions
+            batch_embeddings = [[0.0] * 1536 for _ in batch]
+            all_embeddings.extend(batch_embeddings)
+    
+    return np.array(all_embeddings)
 
 
 # Example Pydantic tool model

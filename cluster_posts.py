@@ -6,7 +6,6 @@ This script loads posts from posts.tsv, generates embeddings, and clusters them 
 
 import pandas as pd
 import numpy as np
-from sentence_transformers import SentenceTransformer
 from sklearn.cluster import KMeans, AgglomerativeClustering, DBSCAN, SpectralClustering
 from sklearn.mixture import GaussianMixture
 from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bouldin_score
@@ -15,7 +14,7 @@ import warnings
 from collections import Counter
 import os
 from dotenv import load_dotenv
-from unwrap_openai import create_openai_completion, GPT5Deployment, ReasoningEffort
+from unwrap_openai import create_openai_completion, GPT5Deployment, ReasoningEffort, generate_embeddings_batch, EmbeddingModel
 import asyncio
 from supabase import create_client, Client
 
@@ -35,6 +34,7 @@ def get_supabase_client():
     if not SUPABASE_KEY:
         raise ValueError("SUPABASE_ANON_KEY not found in environment variables")
     return create_client(SUPABASE_URL, SUPABASE_KEY)
+
 
 def load_posts(file_path):
     """Load posts from TSV file and clean the data."""
@@ -76,16 +76,11 @@ def load_posts(file_path):
     print(f"Loaded {len(df)} posts")
     return df
 
-def generate_embeddings(texts, model_name='all-MiniLM-L6-v2'):
-    """Generate sentence embeddings using HuggingFace sentence-transformers."""
-    print(f"Generating embeddings using {model_name}...")
+async def generate_embeddings(texts):
+    """Generate embeddings for a list of texts using Azure OpenAI."""
+    print(f"Generating embeddings using Azure OpenAI text-embedding-3-small...")
     
-    # Load the sentence transformer model
-    model = SentenceTransformer(model_name)
-    
-    # Generate embeddings
-    embeddings = model.encode(texts, show_progress_bar=True)
-    
+    embeddings = await generate_embeddings_batch(texts)
     print(f"Generated embeddings with shape: {embeddings.shape}")
     return embeddings
 
@@ -168,7 +163,13 @@ def find_optimal_clusters(embeddings, max_k=None):
         cluster_labels = kmeans.fit_predict(embeddings)
         
         # Calculate metrics
-        silhouette_avg = silhouette_score(embeddings, cluster_labels)
+        # Check if we have more than 1 cluster for silhouette score
+        n_clusters = len(set(cluster_labels))
+        if n_clusters > 1:
+            silhouette_avg = silhouette_score(embeddings, cluster_labels)
+        else:
+            silhouette_avg = -1  # Invalid score for single cluster
+        
         calinski_harabasz = calinski_harabasz_score(embeddings, cluster_labels)
         davies_bouldin = davies_bouldin_score(embeddings, cluster_labels)
         inertia = kmeans.inertia_
@@ -182,7 +183,15 @@ def find_optimal_clusters(embeddings, max_k=None):
         # Silhouette score calculated silently
     
     # Find optimal k using different methods
-    silhouette_optimal = k_range[np.argmax(results['silhouette'])]
+    # Filter out invalid silhouette scores (-1)
+    valid_silhouette_indices = [i for i, score in enumerate(results['silhouette']) if score > -1]
+    if valid_silhouette_indices:
+        valid_silhouette_scores = [results['silhouette'][i] for i in valid_silhouette_indices]
+        best_silhouette_idx = valid_silhouette_indices[np.argmax(valid_silhouette_scores)]
+        silhouette_optimal = k_range[best_silhouette_idx]
+    else:
+        silhouette_optimal = k_range[0]  # Fallback to first k
+    
     calinski_optimal = k_range[np.argmax(results['calinski_harabasz'])]
     davies_optimal = k_range[np.argmin(results['davies_bouldin'])]  # Lower is better for Davies-Bouldin
     
@@ -305,7 +314,7 @@ async def generate_cluster_headlines(cluster_analysis):
                 'title': post['title'],
                 'body': post['body'],
                 'score': post['score'],
-                'link': f"https://reddit.com/r/ucla"  # Generic link since we don't have specific post IDs
+                'link': f"https://reddit.com/r/UCSD"  # Generic link since we don't have specific post IDs
             })
         
         # Create prompt for GPT
@@ -501,7 +510,7 @@ Select the 3 most interesting headlines. Respond with ONLY the cluster numbers i
 def save_headlines_to_file(headlines, cluster_analysis, filename="cluster_headlines.txt"):
     """Save headlines to a text file with cluster details."""
     with open(filename, 'w') as f:
-        f.write("UCLA REDDIT - TOP 3 MOST INTERESTING HEADLINES\n")
+        f.write("UCSD REDDIT - TOP 3 MOST INTERESTING HEADLINES\n")
         f.write("="*50 + "\n\n")
         
         for cluster_id, data in headlines.items():
@@ -555,7 +564,7 @@ async def store_headlines_in_supabase(headlines, cluster_analysis):
             # Now insert into subreddit_to_headline_id table with the generated UUIDs
             for i, headline_info in enumerate(headline_result.data):
                 subreddit_entry = {
-                    'subreddit': 'UCLA',
+                    'subreddit': 'UCSD',
                     'headline_id': headline_info['headline_id']  # UUID from headline_info table
                 }
                 subreddit_data.append(subreddit_entry)
@@ -606,10 +615,10 @@ async def main():
     print("Starting post clustering analysis...")
 
     # Load data
-    df = load_posts('ucla.tsv')
+    df = load_posts('UCSD.tsv')
     
     # Generate embeddings
-    embeddings = generate_embeddings(df['combined_text'].tolist())
+    embeddings = await generate_embeddings(df['combined_text'].tolist())
     
     # Find optimal number of clusters using multiple methods
     optimal_k, results = find_optimal_clusters(embeddings)

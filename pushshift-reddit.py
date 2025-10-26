@@ -11,8 +11,8 @@ import requests
 from datetime import datetime, timezone
 
 # ==== EDIT THESE ====
-SUBREDDIT  = "UCLA"
-AFTER_DATE = "2025-01-01"
+SUBREDDIT  = "UCSD"
+AFTER_DATE = "2025-04-20"
 # =====================
 
 BASE_URL = "https://api.pullpush.io/reddit/search/submission/"
