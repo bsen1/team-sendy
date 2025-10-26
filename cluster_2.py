@@ -5,7 +5,7 @@ Post Clustering Script using HuggingFace Sentence Transformers
 - Generates embeddings with sentence-transformers
 - Clusters and analyzes topics
 - Uses GPT (unwrap_openai) to create headlines (multiple per cluster allowed)
-- Selects a diverse set of 3–5 headlines (by list index, not cluster id)
+- Selects a diverse set of headlines (by list index, not cluster id)
 - Saves outputs to files (no cluster labels in the output file)
 - Safely writes selected headlines to Supabase:
     * Insert new headline_info rows
@@ -14,7 +14,7 @@ Post Clustering Script using HuggingFace Sentence Transformers
 
 Env:
   SUPABASE_ANON_KEY=...
-  SUBREDDIT=UCSD                    # optional; defaults to 'UCSD'
+  SUBREDDIT=...
 """
 
 import os
@@ -96,13 +96,10 @@ async def _call_llm_with_retry(*, messages, model, reasoning_effort, max_complet
 # Data loading & preprocessing
 # --------------------------
 def load_posts(file_path: str):
-    """Load posts from TSV with columns at least: title, body, score."""
-
+    """Load posts from TSV with columns at least: score, date_posted_utc, title, body, url."""
     df = pd.read_csv(file_path, sep='\t')
 
-
-
-    required = {'title', 'body', 'score'}
+    required = {'score', 'date_posted_utc', 'title', 'body', 'url'}
     missing = required - set(df.columns)
     if missing:
         raise ValueError(f"Input file missing required columns: {sorted(list(missing))}")
@@ -137,6 +134,9 @@ def load_posts(file_path: str):
 
     # Remove empty/very short posts
     df = df[df['combined_text'].str.len() > 10].copy()
+
+    # Ensure URL is string
+    df['url'] = df['url'].astype(str).fillna('')
 
     return df
 
@@ -281,9 +281,9 @@ def analyze_clusters(df: pd.DataFrame, cluster_labels, embeddings):
         upvote = norm
         combined = 0.7 * semantic + 0.3 * upvote
 
-        # Top N representatives
+        # Top N representatives (keep URL too)
         top_idx = np.argsort(combined)[::-1][:10]
-        sample_posts = cluster_posts.iloc[top_idx][['title', 'body', 'score']]
+        sample_posts = cluster_posts.iloc[top_idx][['title', 'body', 'score', 'url']]
 
         cluster_analysis[cluster_id] = {
             'size': len(cluster_posts),
@@ -302,7 +302,7 @@ async def generate_cluster_headlines(cluster_analysis):
     """
     Generate 0..N headline ideas per cluster.
     Returns a flat list of dicts: {headline, description, meta}
-    (no cluster labels in output/rendering).
+    meta includes: cluster_id, size, avg_score, max_score, top_words, source_post_indices, source_urls
     """
     ideas = []
 
@@ -314,6 +314,7 @@ async def generate_cluster_headlines(cluster_analysis):
                 'title': str(post['title']),
                 'body': str(post['body']),
                 'score': int(post['score']),
+                'url': str(post['url']),
             })
 
         # Truncate to keep context manageable
@@ -330,13 +331,13 @@ async def generate_cluster_headlines(cluster_analysis):
                 f"Upvotes: {p['score']}\n\n"
             )
 
-        # (Do not change prompts)
+        # Prompt now asks model to cite which Post numbers it used
         messages = [
             {
                 "role": "system",
                 "content": (
                     "You are a sharp, concise headline writer analyzing clusters of Reddit posts. "
-                    "Each cluster may contain one or several distinct discussion topics. Generate AT LEAST ONE, PREFERABLY 2 DISTINCT headlines and description from this cluster."
+                    "Each cluster may contain one or several distinct discussion topics. Generate AT LEAST TWO HEADLINES and DESCRIPTIONS from this cluster."
                     "If multiple distinct, unrelated topics appear, generate MULTIPLE headlines — "
                     "each with its own short description.\n\n"
                     "Prioritize headlines for posts about serious campus news, controversial discussions, quirky/funny, events or announcements, student life moments, and unusual topics."
@@ -345,12 +346,15 @@ async def generate_cluster_headlines(cluster_analysis):
                     "- DO NOT include the subreddit name or school name.\n"
                     "- Headlines should clearly describe the situation, issue, or event.\n"
                     "- Write them in a funny, casual style as if a college student wrote them.\n\n"
-                    "- When writing the headlines and descriptions, feel free to use slang like lowkey, highkey, mid, hits different, vibe, valid, chill, mood, etc.\n\n"
+                    "- When writing the headlines and descriptions, feel free to use slang like lowkey, highkey, mid, hits different, crash out, vibe, valid, chill, mood, etc. Don't over-do it though.\n\n"
+                    "After each description, add a line exactly like: SOURCES: Post A, Post B (use the Post numbers from the provided cluster context that the headline is based on).\n\n"
                     "Format exactly:\n"
                     "HEADLINE 1: <headline>\n"
-                    "DESCRIPTION 1: <one-paragraph description>\n\n"
+                    "DESCRIPTION 1: <one-paragraph description>\n"
+                    "SOURCES: Post X, Post Y\n\n"
                     "HEADLINE 2: <headline>\n"
-                    "DESCRIPTION 2: <one-paragraph description>\n\n"
+                    "DESCRIPTION 2: <one-paragraph description>\n"
+                    "SOURCES: Post Z\n\n"
                     "(Add more if distinct topics are found.)"
                 )
             },
@@ -358,7 +362,7 @@ async def generate_cluster_headlines(cluster_analysis):
                 "role": "user",
                 "content": (
                     f"Cluster context:\n{posts_text}\n\n"
-                    "Generate headlines about these posts."
+                    "Generate at least 1 headline about these posts. Use 1-3 source posts per headline."
                 ),
             },
         ]
@@ -368,7 +372,7 @@ async def generate_cluster_headlines(cluster_analysis):
             messages=messages,
             model=GPT5Deployment.GPT_5_NANO,
             reasoning_effort=ReasoningEffort.MINIMAL,
-            max_completion_tokens=300,
+            max_completion_tokens=320,
             retries=1,
             backoff=1.0
         )
@@ -379,28 +383,47 @@ async def generate_cluster_headlines(cluster_analysis):
         if not response_text:
             continue
 
-        # Parse multiple numbered pairs
+        # Parse multiple numbered pairs with optional SOURCES
         pairs = []
-        pattern = r"HEADLINE\s*\d*\s*:\s*(.+?)\s*(?:\r?\n)+DESCRIPTION\s*\d*\s*:\s*(.+?)(?=(?:\r?\n\s*HEADLINE|\Z))"
+        pattern = (
+            r"HEADLINE\s*\d*\s*:\s*(.+?)\s*"
+            r"(?:\r?\n)+DESCRIPTION\s*\d*\s*:\s*(.+?)\s*"
+            r"(?:\r?\n)+SOURCES\s*:\s*([^\n\r]+)"
+            r"(?=(?:\r?\n\s*HEADLINE|\Z))"
+        )
         for m in re.finditer(pattern, response_text, flags=re.IGNORECASE | re.DOTALL):
             h = m.group(1).strip()
             d = m.group(2).strip()
+            src_line = m.group(3).strip() if m.lastindex and m.group(3) else ""
             if len(h) >= 3 and len(d) >= 10:
-                pairs.append((h, d))
+                pairs.append((h, d, src_line))
 
-        # fallback single-line parse
-        if not pairs and response_text:
-            lines = [l.strip() for l in response_text.splitlines() if l.strip()]
-            if lines:
-                h = lines[0]
-                d = ' '.join(lines[1:]) if len(lines) > 1 else ""
+        # Fallback: if no explicit SOURCES matched, try older pattern and leave sources empty
+        if not pairs:
+            legacy_pat = r"HEADLINE\s*\d*\s*:\s*(.+?)\s*(?:\r?\n)+DESCRIPTION\s*\d*\s*:\s*(.+?)(?=(?:\r?\n\s*HEADLINE|\Z))"
+            for m in re.finditer(legacy_pat, response_text, flags=re.IGNORECASE | re.DOTALL):
+                h = m.group(1).strip()
+                d = m.group(2).strip()
                 if len(h) >= 3 and len(d) >= 10:
-                    pairs.append((h, d))
+                    pairs.append((h, d, ""))
 
         if not pairs:
             continue
 
-        for (h, d) in pairs:
+        # Map "Post N" indices to URLs
+        def sources_to_urls(src_str: str):
+            nums = [int(n) for n in re.findall(r'\d+', src_str)]
+            # Only keep valid indices within our enumerated cluster_posts[:10]
+            urls = []
+            valid_indices = []
+            for n in nums:
+                if 1 <= n <= min(10, len(cluster_posts)):
+                    urls.append(cluster_posts[n - 1]['url'])
+                    valid_indices.append(n)
+            return valid_indices, urls
+
+        for (h, d, src_line) in pairs:
+            post_indices, urls = sources_to_urls(src_line)
             ideas.append({
                 "headline": h,
                 "description": d,
@@ -410,6 +433,8 @@ async def generate_cluster_headlines(cluster_analysis):
                     "avg_score": analysis['avg_score'],
                     "max_score": analysis['max_score'],
                     "top_words": analysis['top_words'][:5],
+                    "source_post_indices": post_indices,   # e.g., [2, 5]
+                    "source_urls": urls,                   # e.g., ["https://reddit.com/...", ...]
                 }
             })
 
@@ -420,7 +445,7 @@ async def generate_cluster_headlines(cluster_analysis):
 # --------------------------
 async def select_most_interesting_headlines(all_ideas):
     """
-    Select a diverse set of 3–5 headlines from a flat list of ideas (no cluster labels).
+    Select a diverse set of headlines from a flat list of ideas (no cluster labels).
     Returns a list of {headline, description, meta}.
     """
     # Deduplicate by headline text
@@ -434,7 +459,7 @@ async def select_most_interesting_headlines(all_ideas):
         seen.add(key)
         candidates.append(idea)
 
-    # --- Added: print candidate headlines ---
+    # Print candidate headlines (minimal)
     if candidates:
         print("\n📝 Candidate headlines:")
         for i, cand in enumerate(candidates, 1):
@@ -457,7 +482,6 @@ async def select_most_interesting_headlines(all_ideas):
         )
     headlines_text = "\n\n".join(lines)
 
-    # (Do not change prompts)
     messages = [
         {
             "role": "system",
@@ -492,10 +516,17 @@ Respond ONLY with the numbers (e.g., '4, 1, 9, 2'):"""
     if not response or not getattr(response, "choices", None):
         k = min(5, max(3, len(candidates)))
         chosen = candidates[:k]
-        # --- Added: print selected headlines ---
         print("\n🎯 Selected headlines:")
         for i, h in enumerate(chosen, 1):
             print(f"{i}. {h['headline']}")
+            src_idx = (h.get('meta', {}) or {}).get('source_post_indices', [])
+            src_urls = (h.get('meta', {}) or {}).get('source_urls', [])
+            if src_idx:
+                print(f"   sources: posts {src_idx}")
+            if src_urls:
+                print("   urls:")
+                for u in src_urls:
+                    print(f"     - {u}")
         return chosen
 
     selected_text = (getattr(response.choices[0].message, "content", "") or "").strip()
@@ -505,6 +536,14 @@ Respond ONLY with the numbers (e.g., '4, 1, 9, 2'):"""
         print("\n🎯 Selected headlines:")
         for i, h in enumerate(chosen, 1):
             print(f"{i}. {h['headline']}")
+            src_idx = (h.get('meta', {}) or {}).get('source_post_indices', [])
+            src_urls = (h.get('meta', {}) or {}).get('source_urls', [])
+            if src_idx:
+                print(f"   sources: posts {src_idx}")
+            if src_urls:
+                print("   urls:")
+                for u in src_urls:
+                    print(f"     - {u}")
         return chosen
 
     try:
@@ -514,10 +553,17 @@ Respond ONLY with the numbers (e.g., '4, 1, 9, 2'):"""
         if not chosen:
             k = min(5, max(3, len(candidates)))
             chosen = candidates[:k]
-        # --- Added: print selected headlines ---
         print("\n🎯 Selected headlines:")
         for i, h in enumerate(chosen, 1):
             print(f"{i}. {h['headline']}")
+            src_idx = (h.get('meta', {}) or {}).get('source_post_indices', [])
+            src_urls = (h.get('meta', {}) or {}).get('source_urls', [])
+            if src_idx:
+                print(f"   sources: posts {src_idx}")
+            if src_urls:
+                print("   urls:")
+                for u in src_urls:
+                    print(f"     - {u}")
         return chosen
     except Exception:
         k = min(5, max(3, len(candidates)))
@@ -525,7 +571,16 @@ Respond ONLY with the numbers (e.g., '4, 1, 9, 2'):"""
         print("\n🎯 Selected headlines:")
         for i, h in enumerate(chosen, 1):
             print(f"{i}. {h['headline']}")
+            src_idx = (h.get('meta', {}) or {}).get('source_post_indices', [])
+            src_urls = (h.get('meta', {}) or {}).get('source_urls', [])
+            if src_idx:
+                print(f"   sources: posts {src_idx}")
+            if src_urls:
+                print("   urls:")
+                for u in src_urls:
+                    print(f"     - {u}")
         return chosen
+
 
 # --------------------------
 # Output
@@ -546,6 +601,7 @@ async def store_headlines_in_supabase(selected_ideas):
     """
     Store the chosen headlines in Supabase.
     SAFETY: Do not delete existing rows unless we have new inserts ready.
+    NOTE: Not storing source URLs yet; they're available in idea['meta']['source_urls'].
     """
     try:
         if not selected_ideas:
@@ -554,7 +610,16 @@ async def store_headlines_in_supabase(selected_ideas):
         supabase = get_supabase_client()
 
         # Prepare new rows
-        new_rows = [{"headline": i["headline"], "description": i["description"]} for i in selected_ideas]
+        # Prepare new rows (include source_urls)
+        new_rows = []
+        for i in selected_ideas:
+            urls = (i.get("meta", {}) or {}).get("source_urls", [])
+            new_rows.append({
+                "headline": i["headline"],
+                "description": i["description"],
+                "source_urls": urls,   # <-- added line
+            })
+        
         inserted = supabase.table('headline_info').insert(new_rows).execute()
         if not inserted.data:
             return
@@ -595,7 +660,7 @@ async def main():
 
     optimal_k, _ = find_optimal_clusters(embeddings)
     optimal_k = max(optimal_k, 7)
-    # --- Added: print the final k chosen ---
+    optimal_k = min(optimal_k, 20)
     print(f"\n🔢 optimal_k chosen: {optimal_k}")
 
     cluster_labels, _ = cluster_posts(embeddings, optimal_k)
@@ -608,6 +673,7 @@ async def main():
     save_headlines_to_file(selected_ideas, filename="cluster_headlines.txt")
     await store_headlines_in_supabase(selected_ideas)
 
+    # Keep for debugging
     df_with_clusters = df.copy()
     df_with_clusters['cluster'] = cluster_labels
     df_with_clusters.to_csv('posts_with_clusters.tsv', sep='\t', index=False)

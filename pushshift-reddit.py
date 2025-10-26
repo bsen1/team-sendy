@@ -1,22 +1,27 @@
 #!/usr/bin/env python3
 """
-PullPush (Pushshift mirror) → print posts AFTER a chosen date.
+PullPush (Pushshift mirror) → save posts AFTER a chosen date to {SUBREDDIT}.tsv
 
-Output columns (TSV):
-  score    date_posted_utc    title    body
+Output file columns (TSV):
+  score    date_posted_utc    title    body    url
 """
 
 import time
 import requests
+import os
+from dotenv import load_dotenv
 from datetime import datetime, timezone
 
+# Load environment variables
+load_dotenv()
+
 # ==== EDIT THESE ====
-SUBREDDIT  = "UCLA"
-AFTER_DATE = "2025-01-01"
+SUBREDDIT  = os.getenv("SUBREDDIT")
+AFTER_DATE = "2025-04-01"
 # =====================
 
 BASE_URL = "https://api.pullpush.io/reddit/search/submission/"
-HEADERS  = {"User-Agent": "Reddit-Fetch-Robust/1.3 (+research)"}
+HEADERS  = {"User-Agent": "Reddit-Fetch-Robust/1.4 (+research)"}
 
 def to_epoch(date_str: str) -> int:
     s = date_str.strip()
@@ -47,7 +52,9 @@ def sanitize_field(s: str) -> str:
     return s.replace("\n", " ").replace("\t", " ").strip()
 
 def fetch_all_after(subreddit: str, after_epoch: int, sleep_s: float = 0.2):
-    session = requests.Session(); session.headers.update(HEADERS)
+    """Fetch posts and save them to a TSV file named {subreddit}.tsv"""
+    session = requests.Session()
+    session.headers.update(HEADERS)
     params = {
         "subreddit": subreddit,
         "size": 250,
@@ -56,49 +63,56 @@ def fetch_all_after(subreddit: str, after_epoch: int, sleep_s: float = 0.2):
         "after": int(after_epoch),
     }
 
+    outfile = f"{subreddit.lower()}.tsv"
+    print(f"📄 Writing results to {outfile} ...")
+    seen_posts = set()
     before_cursor = None
-    print("score\tdate_posted_utc\ttitle\tbody\turl")
+    count = 0
 
-    seen_posts = set()  # Track seen post IDs to avoid duplicates
-    
-    while True:
-        if before_cursor is not None:
-            params["before"] = int(before_cursor)
+    with open(outfile, "w", encoding="utf-8") as f:
+        f.write("score\tdate_posted_utc\ttitle\tbody\turl\n")
 
-        data = get_with_retry(session, params)
-        if not data:
-            break  # No more data, exit cleanly
+        while True:
+            if before_cursor is not None:
+                params["before"] = int(before_cursor)
 
-        for post in data:
-            # Check for duplicates using post ID
-            post_id = post.get("id")
-            if post_id in seen_posts:
-                continue
-            seen_posts.add(post_id)
-            
-            created_ts = post.get("created_utc")
-            if not isinstance(created_ts, (int, float)):
-                continue
-            created_dt  = datetime.fromtimestamp(int(created_ts), tz=timezone.utc)
-            created_str = created_dt.strftime("%Y-%m-%d %H:%M:%S")
+            data = get_with_retry(session, params)
+            if not data:
+                break
 
-            score = post.get("score", 0)
-            title = sanitize_field(post.get("title") or "")
-            body  = sanitize_field(post.get("selftext") or "")
-            if body in ("[deleted]", "[removed]"):
-                body = ""
-            
-            # Generate Reddit URL
-            url = f"https://reddit.com/r/{subreddit}/comments/{post_id}"
+            for post in data:
+                post_id = post.get("id")
+                if post_id in seen_posts:
+                    continue
+                seen_posts.add(post_id)
 
-            print(f"{score}\t{created_str}\t{title}\t{body}\t{url}")
+                created_ts = post.get("created_utc")
+                if not isinstance(created_ts, (int, float)):
+                    continue
+                created_dt = datetime.fromtimestamp(int(created_ts), tz=timezone.utc)
+                created_str = created_dt.strftime("%Y-%m-%d %H:%M:%S")
 
-        last_created = data[-1].get("created_utc")
-        if not isinstance(last_created, (int, float)):
-            break
-        before_cursor = int(last_created) - 1
-        time.sleep(sleep_s)
+                score = post.get("score", 0)
+                title = sanitize_field(post.get("title") or "")
+                body = sanitize_field(post.get("selftext") or "")
+                if body in ("[deleted]", "[removed]"):
+                    body = ""
+
+                url = f"https://reddit.com/r/{subreddit}/comments/{post_id}"
+
+                f.write(f"{score}\t{created_str}\t{title}\t{body}\t{url}\n")
+                count += 1
+
+            last_created = data[-1].get("created_utc")
+            if not isinstance(last_created, (int, float)):
+                break
+            before_cursor = int(last_created) - 1
+            time.sleep(sleep_s)
+
+    print(f"✅ Finished: {count} posts saved to {outfile}")
 
 if __name__ == "__main__":
+    if not SUBREDDIT:
+        raise ValueError("Environment variable SUBREDDIT not set.")
     after_epoch = to_epoch(AFTER_DATE)
     fetch_all_after(SUBREDDIT, after_epoch)
