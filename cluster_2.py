@@ -600,8 +600,8 @@ def save_headlines_to_file(selected_ideas, filename="cluster_headlines.txt"):
 async def store_headlines_in_supabase(selected_ideas):
     """
     Store the chosen headlines in Supabase.
-    SAFETY: Do not delete existing rows unless we have new inserts ready.
-    NOTE: Not storing source URLs yet; they're available in idea['meta']['source_urls'].
+    - Saves at most 2 source URLs per headline.
+    - Rolls back headline inserts if mapping fails.
     """
     try:
         if not selected_ideas:
@@ -609,29 +609,32 @@ async def store_headlines_in_supabase(selected_ideas):
 
         supabase = get_supabase_client()
 
-        # Prepare new rows
-        # Prepare new rows (include source_urls)
         new_rows = []
         for i in selected_ideas:
-            urls = (i.get("meta", {}) or {}).get("source_urls", [])
+            urls = (i.get("meta", {}) or {}).get("source_urls", []) or []
+            urls = [u for u in urls if isinstance(u, str) and u.strip()]  # clean
+            urls = urls[:2]  # <-- limit to 2 URLs
+
             new_rows.append({
                 "headline": i["headline"],
                 "description": i["description"],
-                "source_urls": urls,   # <-- added line
+                "source_urls": urls,   # text[] in headline_info
             })
-        
+
         inserted = supabase.table('headline_info').insert(new_rows).execute()
         if not inserted.data:
             return
         new_ids = [row['headline_id'] for row in inserted.data]
 
+        # link subreddit → headlines
         map_rows = [{'subreddit': SUBREDDIT, 'headline_id': hid} for hid in new_ids]
         mapped = supabase.table('subreddit_to_headline_id').insert(map_rows).execute()
         if not mapped.data:
+            # rollback the newly inserted headline_info rows
             supabase.table('headline_info').delete().in_('headline_id', new_ids).execute()
             return
 
-        # Now delete any older mappings/headlines for this subreddit not in new_ids
+        # delete old mappings/headlines not in the new set
         existing = supabase.table('subreddit_to_headline_id') \
                            .select('headline_id') \
                            .eq('subreddit', SUBREDDIT) \
@@ -650,6 +653,7 @@ async def store_headlines_in_supabase(selected_ideas):
 
     except Exception:
         return
+
 
 # --------------------------
 # Orchestration
