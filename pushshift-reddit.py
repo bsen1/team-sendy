@@ -57,21 +57,25 @@ def fetch_all_after(subreddit: str, after_epoch: int, sleep_s: float = 0.2):
     }
 
     before_cursor = None
-    print("score\tdate_posted_utc\ttitle\tbody")
+    print("score\tdate_posted_utc\ttitle\tbody\turl")
 
+    seen_posts = set()  # Track seen post IDs to avoid duplicates
+    
     while True:
         if before_cursor is not None:
             params["before"] = int(before_cursor)
 
         data = get_with_retry(session, params)
         if not data:
-            if before_cursor is not None:
-                before_cursor = int(before_cursor) - 1
-                data = get_with_retry(session, params)
-            if not data:
-                break
+            break  # No more data, exit cleanly
 
         for post in data:
+            # Check for duplicates using post ID
+            post_id = post.get("id")
+            if post_id in seen_posts:
+                continue
+            seen_posts.add(post_id)
+            
             created_ts = post.get("created_utc")
             if not isinstance(created_ts, (int, float)):
                 continue
@@ -83,8 +87,11 @@ def fetch_all_after(subreddit: str, after_epoch: int, sleep_s: float = 0.2):
             body  = sanitize_field(post.get("selftext") or "")
             if body in ("[deleted]", "[removed]"):
                 body = ""
+            
+            # Generate Reddit URL
+            url = f"https://reddit.com/r/{subreddit}/comments/{post_id}"
 
-            print(f"{score}\t{created_str}\t{title}\t{body}")
+            print(f"{score}\t{created_str}\t{title}\t{body}\t{url}")
 
         last_created = data[-1].get("created_utc")
         if not isinstance(last_created, (int, float)):

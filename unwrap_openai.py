@@ -79,7 +79,7 @@ async def create_openai_completion(
         request_params = {
             "messages": messages,
             "max_completion_tokens": max_completion_tokens,
-            "model": model,
+            "model": model.value,
             "reasoning_effort": reasoning_effort,
         }
 
@@ -248,13 +248,13 @@ async def example_disabled_tools() -> None:
     )
 
 
-# async def main() -> None:
-#     """Run all example functions to demonstrate different OpenAI usage patterns."""
-#     await example_basic_chat()
-#     await example_auto_tool_selection()
-#     await example_required_tool_usage()
-#     await example_disabled_tools()
+async def main() -> None:
+    """Run all example functions to demonstrate different OpenAI usage patterns."""
+    await example_basic_chat()
+    # await example_auto_tool_selection()
+    # await example_required_tool_usage()
+    # await example_disabled_tools()
 
 
-# if __name__ == "__main__":
-#     asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())
