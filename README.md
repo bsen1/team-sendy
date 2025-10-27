@@ -2,4 +2,4 @@
 
 YapMaps: See what's buzzing at your campus! 
 
-yapmaps.vercel.app/
+https://yapmaps.vercel.app/
